@@ -1,0 +1,13 @@
+fastapi
+pydantic
+uvicorn
+
+langchain
+langchain-core
+langchain_community
+
+langgraph
+langserve
+
+
+grandalf # to print the graph
