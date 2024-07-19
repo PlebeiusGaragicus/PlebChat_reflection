@@ -5,9 +5,9 @@ uvicorn
 langchain
 langchain-core
 langchain_community
+langchain_ollama
 
 langgraph
 langserve
-
 
 grandalf # to print the graph

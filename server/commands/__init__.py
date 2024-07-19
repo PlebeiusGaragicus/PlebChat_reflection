@@ -24,6 +24,24 @@ USAGE = """
 """
 
 
+# body: dict
+# {
+#     "stream": true,
+#     "model": "pipeline_template",
+#     "messages": [
+#         {
+#             "role": "user",
+#             "content": "/version"
+#         }
+#     ],
+#     "user": {
+#         "name": "local_admin",
+#         "id": "b1e31733-d29f-407a-a43a-0de19cfc84a6",
+#         "email": "admin@admin.com",
+#         "role": "admin"
+#     }
+# }
+# request.body.user.email
 
 def handle_commands(request):
     split = request.user_message.split(" ")
@@ -34,21 +52,29 @@ def handle_commands(request):
 ######################################
     if command == "version":
         from VERSION import VERSION
-        yield f"Version `{VERSION}`"
+        return f"Version `{VERSION}`"
 
     elif command == "info" or command == "about":
-        yield CONSTRUCT_INFORMATION
+        return CONSTRUCT_INFORMATION
     
     elif command == "usage" or command == "help":
-        yield f"```\n{USAGE}\n```"
+        return f"```\n{USAGE}\n```"
 
     elif command == "draw":
         from graph import GRAPH_ASCII
-        yield f"```\n{GRAPH_ASCII}\n```"
+        return f"```\n{GRAPH_ASCII}\n```"
 
     elif command == "debug":
-        yield f"# body:\n```json\n{json.dumps(request.body, indent=4)}\n```\n# model_id:"
-    
+        return f"# body:\n```json\n{json.dumps(request.body, indent=4)}\n```\n# model_id:"
+
+######################################
+# PAYMENT COMMANDS
+######################################
+
+    elif command == "bal":
+        from .payment import cmd_bal
+        return cmd_bal(request)
+
 ######################################
 # CUSTOM COMMANDS TO THIS AGENT
 ######################################
@@ -58,4 +84,4 @@ def handle_commands(request):
 
 ######################################
     else:
-        yield f"Command not found.\n\n```txt\n{USAGE}\n```"
+        return f"Command not found.\n\n```txt\n{USAGE}\n```"

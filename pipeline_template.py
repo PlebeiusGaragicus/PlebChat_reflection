@@ -10,10 +10,10 @@ except Exception:
 
 
 
-CONSTRUCT_NAME = "LangGraph Template"
+PORT = 8513
 PIPELINE_ENDPOINT = "/template"
-PORT = 8510
-LANGSERVE_ENDPOINT = f"http://host.docker.internal:{PORT}"
+CONSTRUCT_NAME = "LangGraph Template"
+LANGSERVE_ENDPOINT = f"http://host.docker.internal"
 
 
 class PostRequest(TypedDict):
@@ -56,7 +56,7 @@ class Pipeline:
 
         #TODO: title generation?
 
-        url = f"{LANGSERVE_ENDPOINT}{PIPELINE_ENDPOINT}"
+        url = f"{LANGSERVE_ENDPOINT}:{PORT}{PIPELINE_ENDPOINT}"
         headers = {
             'accept': 'application/json',
             'Content-Type': 'application/json'

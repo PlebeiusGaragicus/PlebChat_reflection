@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo "uvicorn server.app:app --reload --port 8513"
