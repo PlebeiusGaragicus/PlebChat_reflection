@@ -2,7 +2,7 @@ import json
 
 # Markdown text to explain this construct
 CONSTRUCT_INFORMATION = """
-**Chatbot Agent**
+# Chatbot Agent
 
 Hi, I'm just some agent dude...
 
@@ -51,21 +51,21 @@ def handle_commands(request):
 # STANDARD COMMANDS FOR EVERY AGENT
 ######################################
     if command == "version":
-        from VERSION import VERSION
+        from server.VERSION import VERSION
         return f"Version `{VERSION}`"
 
     elif command == "info" or command == "about":
         return CONSTRUCT_INFORMATION
-    
+
     elif command == "usage" or command == "help":
         return f"```\n{USAGE}\n```"
 
     elif command == "draw":
-        from graph import GRAPH_ASCII
+        from server.graph import GRAPH_ASCII
         return f"```\n{GRAPH_ASCII}\n```"
 
     elif command == "debug":
-        return f"# body:\n```json\n{json.dumps(request.body, indent=4)}\n```\n# model_id:"
+        return f"# body:\n```json\n{json.dumps(request.body, indent=4)}\n```"
 
 ######################################
 # PAYMENT COMMANDS

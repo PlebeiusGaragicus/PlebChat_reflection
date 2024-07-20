@@ -41,29 +41,35 @@ class Pipeline:
     def pipe(self, user_message: str, model_id: str, messages: List[dict], body: dict
              ) -> Union[str, Generator, Iterator]:
 
-        print("######################################")
-        print(f">>> PIPELINE '{self.name.upper()}' RUNNING <<<")
-        print("######################################")
-        print("user_message: str")
-        print(f"{user_message}")
-        print("model_id: str")
-        print(f"{model_id}")
-        print("messages: List[dict]")
-        print(f"{messages}")
-        print("body: dict")
-        print(f"{json.dumps(body, indent=4)}")
-        print("######################################")
+        if body.get("task") == "Title Generation":
+            print("######################################")
+            print("Title Generation")
+            print("######################################")
+            yield "Test Pipeline"
+        else:
 
-        #TODO: title generation?
+            print(f">>> PIPELINE '{self.name.upper()}' RUNNING <<<")
+            print("######################################")
+            print("user_message: str")
+            print(f"{user_message}")
+            print("model_id: str")
+            print(f"{model_id}")
+            # print("messages: List[dict]")
+            # print(f"{messages}")
+            print("body: dict")
+            print(f"{json.dumps(body, indent=4)}")
+            print("######################################")
 
-        url = f"{LANGSERVE_ENDPOINT}:{PORT}{PIPELINE_ENDPOINT}"
-        headers = {
-            'accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
+            #TODO: title generation?
 
-        req = PostRequest(user_message=user_message, messages=messages, body=body)
-        response = requests.post(url, json=req, headers=headers, stream=True)
-        for line in response.iter_lines():
-            if line:
-                yield line.decode() + '\n'
+            url = f"{LANGSERVE_ENDPOINT}:{PORT}{PIPELINE_ENDPOINT}"
+            headers = {
+                'accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+
+            req = PostRequest(user_message=user_message, messages=messages, body=body)
+            response = requests.post(url, json=req, headers=headers, stream=True)
+            for line in response.iter_lines():
+                if line:
+                    yield line.decode() + '\n'

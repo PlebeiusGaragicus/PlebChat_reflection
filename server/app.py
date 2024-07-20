@@ -12,13 +12,14 @@ app = FastAPI()
 
 
 
+
 class PostRequest(BaseModel):
     user_message: str
     messages: List[dict]
     body: dict
 
 
-from server.graph import graph
+from server.graph.graph import graph
 from server.commands import handle_commands
 from server.commands.payment import assure_positive_balance
 
@@ -43,7 +44,16 @@ async def main(request: PostRequest):
 
 
     async def event_stream():
-        async for event in graph.astream_events(input={"messages": [request.messages[-1]]}, version="v2"):
+        graph_input = {
+                "messages": [request.messages[-1]],
+                "lud16": request.body['user']['email']
+            }
+
+        config = {"configurable": {
+            "lud16": request.body['user']['email']
+        }}
+
+        async for event in graph.astream_events(input=graph_input, config=config, version="v2"):
             kind = event["event"]
             if  kind == "on_chat_model_stream" or kind=="on_chain_stream":
                 content = event["data"]["chunk"]
