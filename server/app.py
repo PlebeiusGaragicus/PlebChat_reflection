@@ -20,8 +20,8 @@ class PostRequest(BaseModel):
 
 
 from server.graph.graph import graph
-from server.commands import handle_commands
-from server.commands.payment import assure_positive_balance
+from server.common.commands import handle_commands
+from server.common.payment import assure_positive_balance
 
 
 @app.post("/template")

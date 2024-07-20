@@ -19,10 +19,7 @@ def assure_positive_balance(lud16: str) -> bool:
         return False
 
 
-def cmd_bal(request):
-    # print("*"*80)
-    # print(request)
-    lud16 = request.body['user']['email']
+def cmd_bal(lud16):
     response = requests.get(f"{DATABASE_API_URL}:{DATABASE_API_PORT}/users/{lud16}/balance/")
 
     if response.status_code == 200:

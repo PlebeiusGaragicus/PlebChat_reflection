@@ -73,7 +73,7 @@ def handle_commands(request):
 
     elif command == "bal":
         from .payment import cmd_bal
-        return cmd_bal(request)
+        return cmd_bal(lud16=request.body['user']['email'])
 
 ######################################
 # CUSTOM COMMANDS TO THIS AGENT
