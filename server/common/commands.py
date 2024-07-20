@@ -20,6 +20,11 @@ USAGE = """
 
 ############################################################################
 def version(_):
+    """
+    This is the docscring for the version command.
+    #TODO I want to use this to help generate the usage text.
+    #... or ... BETTER YET... i can have a use the /help <command> to get the docstring for that command!!! Just like man pages!!!
+    """
     from server.VERSION import VERSION
     return f"Version `{VERSION}`"
 
@@ -71,17 +76,21 @@ def balance(request):
 
 
 def pay(request):
+# This command will:
+# - check if the user has any pending invoices.
+# - if so, it will check if the invoice has been paid
+# - if not, it will generate a new invoice for the user to pay.
+
     lud16 = request.body['user']['email']
     if not lud16:
         return "⚠️ No user LUD16 provided." #TODO: we need to log these errors.  This should never happen!!
     else:
         #TODO: the user can specify an amount to invoice??
-        return f"""⚠️ Not implemented yet.\n
-This command will:
-- check if the user has any pending invoices.
-- if so, it will check if the invoice has been paid
-- if not, it will generate a new invoice for the user to pay.
-"""
+
+        from .payment import get_invoice
+        invoice = get_invoice(lud16=lud16)
+
+        return f"""{invoice}"""
 
 
 def url(request):
