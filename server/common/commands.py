@@ -24,24 +24,6 @@ USAGE = """
 """
 
 
-# body: dict
-# {
-#     "stream": true,
-#     "model": "pipeline_template",
-#     "messages": [
-#         {
-#             "role": "user",
-#             "content": "/version"
-#         }
-#     ],
-#     "user": {
-#         "name": "local_admin",
-#         "id": "b1e31733-d29f-407a-a43a-0de19cfc84a6",
-#         "email": "admin@admin.com",
-#         "role": "admin"
-#     }
-# }
-# request.body.user.email
 
 def handle_commands(request):
     split = request.user_message.split(" ")
@@ -61,7 +43,7 @@ def handle_commands(request):
         return f"```\n{USAGE}\n```"
 
     elif command == "draw":
-        from server.graph import GRAPH_ASCII
+        from server.graph.graph import GRAPH_ASCII
         return f"```\n{GRAPH_ASCII}\n```"
 
     elif command == "debug":
