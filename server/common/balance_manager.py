@@ -2,27 +2,32 @@ import requests
 
 API = "http://localhost:5101"
 
-#TODO: This module just needs to be better... optimized at least.  Can we persist the connection?  I don't want to open/close in every node!
 class BalanceManager:
-    def __init__(self, api_url = API):
+    def __init__(self, api_url=API):
         self.api_url = api_url
+        self.session = requests.Session()  # Persist the connection
+
+    def __del__(self):
+        self.session.close()  # Ensure the session is closed when the instance is destroyed
 
     def check_balance(self, username):
-        response = requests.post(f"{self.api_url}/balance/", json={"username": username})
-        if response.status_code == 200:
+        try:
+            response = self.session.get(f"{self.api_url}/balance/", params={"username": username})
+            response.raise_for_status()
             return response.json()
-        else:
-            raise ValueError(f"Failed to get balance: {response.json().get('detail', 'Unknown error')}")
+        except requests.exceptions.RequestException as e:
+            raise ValueError(f"Failed to get balance: {e}")
 
     def deduct_balance(self, username, chat_id, amount):
-        response = requests.put(
-            f"{self.api_url}/tx/",
-            json={"username": username, "chat_id": chat_id, "amount": -amount}
-        )
-        if response.status_code == 200:
+        try:
+            response = self.session.put(
+                f"{self.api_url}/tx/",
+                json={"username": username, "chat_id": chat_id, "amount": -amount}
+            )
+            response.raise_for_status()
             return response.json()
-        else:
-            raise ValueError(f"Failed to deduct balance: {response.json().get('detail', 'Unknown error')}")
+        except requests.exceptions.RequestException as e:
+            raise ValueError(f"Failed to deduct balance: {e}")
 
 def deduct(lud16, chat_id, amount):
     if not lud16:
@@ -30,3 +35,8 @@ def deduct(lud16, chat_id, amount):
 
     bm = BalanceManager()
     return bm.deduct_balance(lud16, chat_id, amount)
+
+# Example Usage:
+# bm = BalanceManager()
+# print(bm.check_balance("some_username"))
+# print(bm.deduct_balance("some_username", "chat_id_123", 50))

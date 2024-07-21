@@ -9,7 +9,7 @@ from fastapi.responses import StreamingResponse, PlainTextResponse
 
 from server.graph.graph import graph
 from server.common.commands import handle_commands
-from server.common.payment import assure_positive_balance
+from server.common.payment import assure_positive_balance, UserNotRegistered, get_balance
 
 #NOTE: adjust the endpoint in the pipeline module!
 from pipeline import PIPELINE_ENDPOINT
@@ -40,7 +40,15 @@ async def main(request: PostRequest):
 
     ###############
     # CHECK BALANCE
-    elif not assure_positive_balance(request.body['user']['email']):
+    # user_balance = assure_positive_balance(request.body['user']['email'])
+
+    try:
+        user_balance = get_balance(lud16=request.body['user']['email'])
+    except UserNotRegistered as e:
+        error_message = f"Hello new user!  Type `/pay` to get started."
+        return StreamingResponse(iter([error_message]), media_type="text/event-stream")
+
+    if user_balance > 0: # assure_positive_balance(request.body['user']['email']):
         return StreamingResponse(iter(["Insufficient balance. Please top up your account."]), media_type="text/event-stream")
 
         # NOTE: This doesn't work... it still streams slowly WTF!?!

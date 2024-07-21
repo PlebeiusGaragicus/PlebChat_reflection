@@ -1,5 +1,7 @@
 import json
+from fastapi.responses import StreamingResponse
 
+from server.common.payment import UserNotRegistered
 
 
 
@@ -71,8 +73,14 @@ def balance(request):
     if not lud16:
         return "⚠️ No user LUD16 provided." #TODO: we need to log these errors.  This should never happen!!
     else:
-        from .payment import check_balance
-        return check_balance(lud16=lud16)
+        try:
+            from .payment import show_user_balance
+            return show_user_balance(lud16=lud16)
+        except UserNotRegistered as e:
+            error_message = f"Hello new user!  You have no balance yet - type `/pay` to get started."
+            return StreamingResponse(iter([error_message]), media_type="text/event-stream")
+
+            
 
 
 def pay(request):
@@ -90,7 +98,11 @@ def pay(request):
         from .payment import get_invoice
         invoice = get_invoice(lud16=lud16)
 
-        return f"""{invoice}"""
+        ln_link = f"lightning:{invoice['pr']}?amount={invoice['amount']}"
+
+        return f"""[Click to pay with Lightning ⚡️](lightning:{invoice['pr']})\n\n```json\n{invoice}\n```\n"""
+        # return f"""[Click here to pay]({ln_link})\n\n```json\n{invoice}\n```\n"""
+        # return f"""<a href="lightning:{invoice['pr']}" target="_blank">Click to pay with Lightning ⚡️</a>"""
 
 
 def url(request):
