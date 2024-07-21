@@ -83,7 +83,10 @@ def create_invoice(user_uuid, sats: int = 100):
     }
 
     response = requests.get(url, params=params)
-    
+    print(response.json()['invoice'])
+
+    response.raise_for_status()
+
     if response.status_code == 200:
         invoice_data = response.json()['invoice']
         invoice_data['user'] = user_uuid
